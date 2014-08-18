@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"> 
+
+<h:head>
+	<h:outputStylesheet name="css/table.css" />
+</h:head> 
+<body>
+	<h2>Temperature forecast</h2>	
+	<p:dataTable value="#{weatherBean.temperatureTable()}" var="item">
+		<p:column headerText="Date">
+			<h:outputText value="#{item.date}" />
+		</p:column>
+		<p:column headerText="Open Weather">
+			<h:outputText value="#{item.temper('OpenWeather')}" />
+		</p:column>
+		<p:column headerText="Weather.com">
+			<h:outputText value="#{item.temper('WeatherCom')}" />
+		</p:column>
+	</p:dataTable>
+	<h:messages />
+	<script>
+		$("th:contains(Open Weather)").html('<a href="temper_one.xhtml?provider=OpenWeather">Open Weather</a>');
+		$("th:contains(Weather.com)").html('<a href="temper_one.xhtml?provider=WeatherCom">Weather.com</a>');
+	</script>
+</body> 
+</html>

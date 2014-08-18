@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"> 
+
+<f:metadata>
+	<f:viewParam name="provider" value="#{weatherSingleBean.provider}" />
+</f:metadata>
+<h:head></h:head>
+
+<body>
+	<h2>
+	    <h:outputText value="#{weatherSingleBean.providerScreenName()} "/>
+	</h2>
+	<ui:repeat value="#{weatherSingleBean.temperature()}" var="item">
+	    <h:outputText value="Date: #{item.date} "/>
+	    <h:outputText value="— #{item.temp}°"/><br />
+	</ui:repeat>
+	
+	<h:messages />
+</body> 
+</html>

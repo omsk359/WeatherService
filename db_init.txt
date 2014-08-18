@@ -1,0 +1,25 @@
+CREATE DATABASE WeatherService;
+
+CREATE TABLE openweathertepm
+(
+  moment timestamp without time zone NOT NULL,
+  temp double precision,
+  CONSTRAINT openweathertepm_pkey PRIMARY KEY (moment)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE openweathertepm
+  OWNER TO postgres;
+
+CREATE TABLE weathercomtepm
+(
+  moment timestamp without time zone NOT NULL,
+  temp double precision,
+  CONSTRAINT weathercomtepm_pkey PRIMARY KEY (moment)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE weathercomtepm
+  OWNER TO postgres;
