@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import dao.TemperatureItem;
 
 @Entity
-@Table(name="OpenWeatherTepm")
+@Table(name="openweathertepm")
 public class TemperatureItemOW implements TemperatureItem 
 {
 	private Date date;

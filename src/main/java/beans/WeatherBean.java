@@ -11,6 +11,8 @@ import java.util.Map;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
+import service.CronTask;
+import utils.Log;
 import dao.Factory;
 import dao.TemperatureItem;
 
@@ -22,14 +24,29 @@ public class WeatherBean
 	{
 		return Factory.getTemperatureDAO().getAll(provider);
 	}
+	
+	private List<TableItem> temperatureTable;
+	
+	public List<TableItem> getTemperatureTable() throws Exception
+	{
+		if (temperatureTable == null)
+			refreshTemperTable();
+		return temperatureTable;
+	}
 
 	@SuppressWarnings("serial")
-	public List<TableItem> temperatureTable() throws Exception
+	public void refreshTemperTable()
 	{
-		Map<String, Map<Date, Double>> map = new HashMap<String, Map<Date, Double>>() {{
-			put("Open Weather", listToMap(temperature("Open Weather")));
-			put("weather.com", listToMap(temperature("weather.com")));
-		}};
+		Map<String, Map<Date, Double>> map;
+		try {
+			map = new HashMap<String, Map<Date, Double>>() {{
+				put("Open Weather", listToMap(temperature("Open Weather")));
+				put("weather.com", listToMap(temperature("weather.com")));
+			}};
+		} catch (Exception e) {
+			Log.error(e);
+			return;
+		}
 		Map<Date, Map<String, Double>> tableMap = toTableMap(map);
 		
 		// Map<Date, Map<String, Double>> -> List<TableItem>
@@ -42,7 +59,19 @@ public class WeatherBean
 				return item1.date.compareTo(item2.date);
 			}
 		});
-		return result;
+		temperatureTable = result;
+	}
+	
+	public void update()
+	{
+		try {
+			Log.info("Starting update...");
+			CronTask.runImmediately();
+			refreshTemperTable();
+			Log.info("Update finished!");
+		} catch (Exception e) {
+			Log.error(e);
+		}
 	}
 	
 	// build Map for fast loopup by Date 

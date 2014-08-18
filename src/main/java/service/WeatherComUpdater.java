@@ -20,7 +20,7 @@ import utils.Log;
 import dao.TemperatureItem;
 import dao.Impl.*;
 
-public class WeatherComUpdater extends TimerTask
+public class WeatherComUpdater implements Runnable
 {
 	@Override
 	public void run()

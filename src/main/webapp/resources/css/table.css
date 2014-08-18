@@ -10,3 +10,9 @@ th a:hover, th a:active {
     color: #FF0000 !important;
     text-decoration: underline !important;
 }
+table {
+  margin-top: 10px;
+}
+button {
+  margin-left: 10px;
+}

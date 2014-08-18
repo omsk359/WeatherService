@@ -2,8 +2,10 @@ package service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
@@ -18,23 +20,43 @@ import utils.Log;
 
 @ManagedBean(eager=true)
 @ApplicationScoped
-public class CronTask {
+public class CronTask
+{
+	private static Map<Runnable, Integer> delays = new HashMap<Runnable, Integer>();
+	private static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 	public CronTask()
 	{
 		try {
 			readConfig();
-			Timer timer = new Timer();
-			TimerTask updater1 = new OpenWeatherUpdater(); 
-			timer.schedule(updater1, 0, delays.get("Open Weather") * 1000);
-			TimerTask updater2 = new WeatherComUpdater(); 
-			timer.schedule(updater2, 0, delays.get("weather.com") * 1000);
+			runImmediately();
 			Log.info("Service started");
 		} catch (Exception e) {
 			Log.error(e);
 		}
 	}
 	
+	// stop scheduler, run concurrent all updaters, wait, new scheduler
+	public static synchronized void runImmediately()
+	{
+		scheduler.shutdown();
+		
+		ExecutorService taskExecutor = Executors.newFixedThreadPool(delays.size());
+		for (Runnable task : delays.keySet())
+			taskExecutor.submit(task);
+		taskExecutor.shutdown();
+		try {
+			taskExecutor.awaitTermination(60, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {}
+
+		scheduler = Executors.newScheduledThreadPool(1);
+		for (Map.Entry<Runnable, Integer> entry : delays.entrySet()) {
+			int delay = entry.getValue();
+			Runnable task = entry.getKey();
+			scheduler.scheduleWithFixedDelay(task, delay, delay, TimeUnit.SECONDS);
+		}
+	}
+
 	private static void readConfig() throws Exception
 	{
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
@@ -44,9 +66,15 @@ public class CronTask {
 		NodeList nodes = doc.getElementsByTagName("provider");
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Element item = (Element) nodes.item(i);
-			delays.put(item.getAttribute("name"), Integer.parseInt(item.getAttribute("delay")));
+			int delay = Integer.parseInt(item.getAttribute("delay"));
+			switch (item.getAttribute("name")) {
+			case "Open Weather":
+				delays.put(new OpenWeatherUpdater(), delay);
+				break;
+			case "weather.com":
+				delays.put(new WeatherComUpdater(), delay);
+				break;
+			}
 		}
 	}
-		
-	private static Map<String, Integer> delays = new HashMap<String, Integer>();
 }

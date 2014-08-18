@@ -9,19 +9,23 @@
 	<h:outputStylesheet name="css/table.css" />
 </h:head> 
 <body>
-	<h2>Temperature forecast</h2>	
-	<p:dataTable value="#{weatherBean.temperatureTable()}" var="item">
-		<p:column headerText="Date">
-			<h:outputText value="#{item.date}" />
-		</p:column>
-		<p:column headerText="Open Weather">
-			<h:outputText value="#{item.temper('Open Weather')}" />
-		</p:column>
-		<p:column headerText="Weather.com">
-			<h:outputText value="#{item.temper('weather.com')}" />
-		</p:column>
-	</p:dataTable>
-	<h:messages />
+	<h2>Temperature forecast</h2>
+	<h:form>
+		<p:commandButton value="Update" update="temperTable" actionListener="#{weatherBean.refreshTemperTable}" />
+		<p:commandButton value="Update DB" update="temperTable" actionListener="#{weatherBean.update}" />
+		<p:dataTable id="temperTable" value="#{weatherBean.temperatureTable}" var="item">
+			<p:column headerText="Date">
+				<h:outputText value="#{item.date}" />
+			</p:column>
+			<p:column headerText="Open Weather">
+				<h:outputText value="#{item.temper('Open Weather')}" />
+			</p:column>
+			<p:column headerText="Weather.com">
+				<h:outputText value="#{item.temper('weather.com')}" />
+			</p:column>
+		</p:dataTable>
+		<h:messages />
+	</h:form>
 	<script>
 		$("th:contains(Open Weather)").html('<a href="temper_one.xhtml?provider=Open Weather">Open Weather</a>');
 		$("th:contains(Weather.com)").html('<a href="temper_one.xhtml?provider=weather.com">Weather.com</a>');
