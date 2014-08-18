@@ -29,7 +29,8 @@ public class WeatherComUpdater extends TimerTask
 		try {
 			List<TemperatureItem> forecast = download();
 			Log.info(String.format("Recieved %d items", forecast.size()));
-			Factory.getForecastDAO().addTemperature("WeatherCom", forecast);
+			Factory.getTemperatureDAO().addOrUpdate("weather.com", forecast);
+			Factory.getTemperatureDAO().removeEarly("weather.com", new Date());
 		} catch (Exception e) {
 			Log.error(e);
 		}

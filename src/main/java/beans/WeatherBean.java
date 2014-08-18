@@ -13,7 +13,6 @@ import javax.faces.bean.SessionScoped;
 
 import dao.Factory;
 import dao.TemperatureItem;
-import utils.Log;
 
 @ManagedBean
 @SessionScoped
@@ -21,15 +20,15 @@ public class WeatherBean
 {		
 	public List<TemperatureItem> temperature(String provider) throws Exception
 	{
-		return Factory.getForecastDAO().getTemperature(provider);
+		return Factory.getTemperatureDAO().getAll(provider);
 	}
 
 	@SuppressWarnings("serial")
 	public List<TableItem> temperatureTable() throws Exception
 	{
 		Map<String, Map<Date, Double>> map = new HashMap<String, Map<Date, Double>>() {{
-			put("OpenWeather", listToMap(temperature("OpenWeather")));
-			put("WeatherCom", listToMap(temperature("WeatherCom")));
+			put("Open Weather", listToMap(temperature("Open Weather")));
+			put("weather.com", listToMap(temperature("weather.com")));
 		}};
 		Map<Date, Map<String, Double>> tableMap = toTableMap(map);
 		
@@ -76,7 +75,7 @@ public class WeatherBean
 					if (!provider.equals(entry_all_inner.getKey()) &&
 							entry_all_inner.getValue().containsKey(inner_date))
 						inner_map.put(entry_all_inner.getKey(), entry_all_inner.getValue().get(inner_date));
-				Log.info("inner: " +  provider + " " + inner_map.size());
+//				Log.info("inner: " +  provider + " " + inner_map.size());
 				tableMap.put(inner_date, inner_map);
 			}
 		}

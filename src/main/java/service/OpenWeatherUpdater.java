@@ -29,7 +29,10 @@ public class OpenWeatherUpdater extends TimerTask
 		try {
 			List<TemperatureItem> forecast = download();
 			Log.info(String.format("Recieved %d items", forecast.size()));
-			Factory.getForecastDAO().addTemperature("OpenWeather", forecast);
+			Factory.getTemperatureDAO().addOrUpdate("OpenWeather", forecast);
+			
+			// remove old data
+			Factory.getTemperatureDAO().removeEarly("Open Weather", new Date());
 		} catch (Exception e) {
 			Log.error(e);
 		}
@@ -39,7 +42,7 @@ public class OpenWeatherUpdater extends TimerTask
 	{
 		URL url = new URL("http://api.openweathermap.org/data/2.5/forecast?q=Saint%20Petersburg&mode=xml");
 		InputStream stream = url.openStream();
-		
+
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = domFactory.newDocumentBuilder();
 		Document doc = builder.parse(stream);

@@ -1,9 +1,9 @@
 package dao;
 
-import dao.Impl.ForecastDAOImpl;
+import dao.Impl.TemperatureDAOImpl;
 
 public class Factory {
-	private static ForecastDAO forecastDAO = null;
+	private static TemperatureDAO forecastDAO = null;
     private static Factory instance = null;
     
     public static synchronized Factory getInstance() {
@@ -12,9 +12,9 @@ public class Factory {
     	return instance;
     }
     
-    public static synchronized ForecastDAO getForecastDAO() {
+    public static synchronized TemperatureDAO getTemperatureDAO() {
     	if (forecastDAO == null)
-    		forecastDAO = new ForecastDAOImpl();
+    		forecastDAO = new TemperatureDAOImpl();
         return forecastDAO;
     }
 }

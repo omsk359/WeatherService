@@ -21,13 +21,13 @@ public class WeatherSingleBean {
 	
 	@SuppressWarnings("serial")
 	private static Map<String, String> providerNames = new HashMap<String, String>() {{
-		put("OpenWeather", "Open Weather");
-		put("WeatherCom", "Weather.com");
+		put("Open Weather", "Open Weather");
+		put("weather.com", "Weather.com");
 	}};	
 	public String providerScreenName() { return providerNames.get(provider); }
 	
 	public List<TemperatureItem> temperature() throws Exception
 	{
-		return Factory.getForecastDAO().getTemperature(provider);
+		return Factory.getTemperatureDAO().getAll(provider);
 	}
 }

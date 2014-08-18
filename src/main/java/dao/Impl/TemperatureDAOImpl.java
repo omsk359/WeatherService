@@ -1,19 +1,22 @@
 package dao.Impl;
 
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import utils.HibernateUtil;
 import utils.Log;
-import dao.ForecastDAO;
+import dao.TemperatureDAO;
 import dao.TemperatureItem;
 
-public class ForecastDAOImpl implements ForecastDAO 
+public class TemperatureDAOImpl implements TemperatureDAO 
 {
-	public void addTemperature(String provider, List<TemperatureItem> items) throws SQLException
+	public void addOrUpdate(String provider, List<TemperatureItem> items) throws SQLException
 	{
         Session session = null;
         try {
@@ -39,17 +42,17 @@ public class ForecastDAOImpl implements ForecastDAO
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<TemperatureItem> getTemperature(String provider) throws SQLException
+	public List<TemperatureItem> getAll(String provider) throws SQLException
 	{
 		Log.info(String.format("Get temperature from DB for %s...", provider));
         Session session = null;
         List<TemperatureItem> items = null;
         try {
             session = HibernateUtil.getSessionFactory().openSession();
-            if (provider.equals("OpenWeather"))
+            if (provider.equals("Open Weather"))
             	items = (List<TemperatureItem>) 
             				session.createCriteria(TemperatureItemOW.class).list();
-            else if (provider.equals("WeatherCom"))
+            else if (provider.equals("weather.com"))
             	items = (List<TemperatureItem>) 
             				session.createCriteria(TemperatureItemWC.class).list();
             Log.info(String.format("Found %d items!", items.size()));
@@ -61,5 +64,28 @@ public class ForecastDAOImpl implements ForecastDAO
                 session.close();
         }
         return items;
+	}
+
+	@SuppressWarnings("serial")
+	private static Map<String, String> providerTables = new HashMap<String, String>() {{
+		put("Open Weather", "TemperatureItemOW");
+		put("weather.com", "TemperatureItemWC");
+	}};
+	
+	public void removeEarly(String provider, Date date) throws SQLException
+	{
+		Log.info(String.format("Remove temperature from DB for %s...", provider));
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+        	String hql = "delete from " + providerTables.get(provider) + " where moment < :date"; 
+        	int result = session.createQuery(hql).setTimestamp("date", date).executeUpdate();
+            Log.info(String.format("Removed %d items!", result));
+        } catch (Exception e) {
+        	Log.error(e);
+        } finally {
+            if (session != null && session.isOpen())
+                session.close();
+        }
 	}
 }

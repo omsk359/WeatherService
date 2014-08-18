@@ -15,16 +15,16 @@
 			<h:outputText value="#{item.date}" />
 		</p:column>
 		<p:column headerText="Open Weather">
-			<h:outputText value="#{item.temper('OpenWeather')}" />
+			<h:outputText value="#{item.temper('Open Weather')}" />
 		</p:column>
 		<p:column headerText="Weather.com">
-			<h:outputText value="#{item.temper('WeatherCom')}" />
+			<h:outputText value="#{item.temper('weather.com')}" />
 		</p:column>
 	</p:dataTable>
 	<h:messages />
 	<script>
-		$("th:contains(Open Weather)").html('<a href="temper_one.xhtml?provider=OpenWeather">Open Weather</a>');
-		$("th:contains(Weather.com)").html('<a href="temper_one.xhtml?provider=WeatherCom">Weather.com</a>');
+		$("th:contains(Open Weather)").html('<a href="temper_one.xhtml?provider=Open Weather">Open Weather</a>');
+		$("th:contains(Weather.com)").html('<a href="temper_one.xhtml?provider=weather.com">Weather.com</a>');
 	</script>
 </body> 
 </html>
